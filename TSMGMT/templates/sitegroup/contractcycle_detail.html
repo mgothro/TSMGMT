@@ -1,0 +1,64 @@
+{# templates/contractcycle_detail.html #}
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container my-4">
+	<h2>
+		Contract Cycle: {{ cc.description }} ({{cc.contractcycleid}})
+		{{ back_button(text='Back to Details',url=url_for('sitegroup.sitegroup_detail', directory=sg.directory)) }}
+	</h2>
+	
+	<div class="table-responsive">
+		<table id="contract-sites-table" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>Contract ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="0" placeholder="Filter"></th>
+					<th>Cycle ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="1" placeholder="Filter"></th>
+					<th>Agency Name<br><input type="text" class="filter-input form-control form-control-sm" data-col="2" placeholder="Filter"></th>
+					<th>Program Name<br><input type="text" class="filter-input form-control form-control-sm" data-col="3" placeholder="Filter"></th>
+					<th>Agency ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="4" placeholder="Filter"></th>
+					<th>Program ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="5" placeholder="Filter"></th>
+					<th>UContract ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="6" placeholder="Filter"></th>
+					<th>Site ID<br><input type="text" class="filter-input form-control form-control-sm" data-col="7" placeholder="Filter"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for site in cc.contract_sites %}
+				<tr>
+					<td>{{ site.contractid }}</td>
+					<td>{{ site.contractcycleid }}</td>
+					<td>{{ site.agency_name }}</td>
+					<td>{{ site.program_name }}</td>
+					<td>{{ site.agency_id }}</td>
+					<td>{{ site.program_id }}</td>
+					<td>{{ site.ucontractid }}</td>
+					<td>{{ site.siteid }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const table = document.getElementById('contract-sites-table');
+  const inputs = table.querySelectorAll('.filter-input');
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const col = parseInt(input.dataset.col);
+      const filter = input.value.trim().toLowerCase();
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        const cell = tr.cells[col];
+        const text = cell.textContent.trim().toLowerCase();
+        tr.style.display = text.includes(filter) ? '' : 'none';
+      });
+    });
+  });
+});
+</script>
+{% endblock %}

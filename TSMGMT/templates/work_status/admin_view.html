@@ -1,0 +1,119 @@
+{# templates/work_status/admin_view.html #}
+{% extends "layout.html" %}
+{% block title %}Work Status Tracker{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1 class="mb-4">
+		My Todos - <small class="text-muted">{{ today.strftime('%b %d, %Y') }}</small>
+		{{ back_button(text='Back',url=url_for('work_status.index')) }}
+	</h1>
+
+	<div class="mb-3">
+		<input type="text"
+			   id="email-filter"
+			   class="form-control"
+			   placeholder="Filter by email...">
+	</div>
+
+	<div class="row gx-3 gy-4" id="main-row">
+		{% set categories = {
+		'done':        'Done',
+		'working_on':  'Working On',
+		'todays_todos':'Today\'s Todos'
+		} %}
+		{% set status_colors = {
+		'done':        'success',
+		'working_on':  'info',
+		'todays_todos':'purple'
+		} %}
+
+		{% for key, heading in categories.items() %}
+		<div class="col-12 col-md-6 col-lg">
+			<div class="card h-100 d-flex flex-column shadow-sm">
+				<div class="card-header bg-{{ status_colors[key] }} text-white sticky-top">
+					{{ heading }}
+				</div>
+				<div class="card-body p-3 dropzone flex-grow-1 overflow-auto"
+					 id="zone-{{ key }}"
+					 data-status="{{ key }}">
+					<div class="todo-list d-flex flex-column gap-4">
+
+						{% for todo in todos
+						if (todo.status|lower if todo.status else '') == key %}
+						<div class="card border draggable-item p-0"
+							 draggable="true"
+							 data-id="{{ todo.id }}">
+							<div class="card-header bg-{{ status_colors[key] }} text-white py-2 px-3">
+								<span class="fw-semibold">{{ todo.project_name }}</span><br>
+								{% if todo.due_on and todo.due_on <= today %}
+								<small class="text-muted fw-bold">
+									{% else %}
+									<small class="text-muted">
+										{% endif %}
+										Due: {{
+ todo.due_on.strftime('%b %d, %Y')
+                               if todo.due_on else 'No due date'
+										}}
+									</small>
+								</small>
+							</div>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item py-2 px-3">
+									{{ todo.name }}
+									{% if todo.app_url %}
+									<a href="{{ todo.app_url }}"
+									   target="_blank"
+									   rel="noopener">
+										view {{ todo.task_type }}
+									</a>
+									{% endif %}
+									<br />
+									<span class="badge
+                               bg-{{ email_colors.get(todo.email,
+                                                     default_email_color) }}
+                               float-right">
+										{{ todo.email }}
+									</span>
+									{% if todo.updated_at %}
+									<br />
+									<span><b>Updated: {{ todo.updated_at.strftime("%I:%M %p - %b %d, %Y") }}</b></span>
+									{% endif %}
+								</li>
+							</ul>
+						</div>
+						{% else %}
+						<div class="list-group-item placeholder text-muted fst-italic">
+							No tasks
+						</div>
+						{% endfor %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='scripts/work_status.js') }}"></script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var filterInput = document.getElementById('email-filter');
+		filterInput.addEventListener('input', function () {
+			var q = this.value.trim().toLowerCase();
+			document.querySelectorAll('.draggable-item').forEach(function (card) {
+				var badge = card.querySelector('.badge');
+				var email = badge
+					? badge.textContent.trim().toLowerCase()
+					: '';
+				card.style.display = (!q || email.indexOf(q) !== -1)
+					? '' : 'none';
+			});
+		});
+	});
+</script>
+{% endblock %}

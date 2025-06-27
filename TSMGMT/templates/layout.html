@@ -1,0 +1,84 @@
+{% from '_macros.html' import back_button %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}My App{% endblock %}</title>
+
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+		  rel="stylesheet">
+
+	<!-- Bootstrap Icons (optional) -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+		  rel="stylesheet">
+
+	<!-- Your custom styles -->
+	<link rel="stylesheet"
+		  href="{{ url_for('static', filename='content/work_status.css') }}">
+
+	<!-- Loading overlay styles -->
+	<style>
+		/* full-screen transparent overlay that still blocks interaction */
+		#loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			/* semi-transparent white; change alpha or use 'transparent' */
+			background: rgba(255,255,255,0.5);
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			/* ensure it catches all pointer events */
+			pointer-events: all;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- Loading overlay -->
+	<div id="loading-overlay">
+		<div class="spinner-border text-primary" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+		<div class="container">
+			<a class="navbar-brand" href="{{ url_for('main.home') }}">
+				<i class="bi bi-kanban-fill me-1"></i>
+				TS MGMT
+			</a>
+			<button class="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#mainNavbar"
+					aria-controls="mainNavbar"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+	</nav>
+
+	<!-- Main content -->
+	<main class="py-4">
+		{% block content %}{% endblock %}
+	</main>
+
+	<!-- Bootstrap JS Bundle (includes Popper) -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+			defer></script>
+
+	<!-- Global script to hide loading overlay -->
+	<script src="{{ url_for('static', filename='scripts/global.js') }}" defer></script>
+
+	{% block scripts %}{% endblock %}
+</body>
+</html>

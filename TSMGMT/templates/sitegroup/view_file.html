@@ -1,0 +1,73 @@
+{# templates/sitegroup/view_file.html #}
+{% extends "layout.html" %}
+
+{% block title %}{{ filename }} {{ directory }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+	<div class="row justify-content-center">
+		<div class="mx-auto" style="max-width: 90vw;">
+			<div class="card mb-4 shadow-sm">
+				<div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">{{ filename }}</h5>
+					<div>
+						<button id="copyXmlBtn" class="btn btn-sm btn-light me-2">
+							<i class="bi bi-clipboard"></i>
+						</button>
+						<a href="{{ url_for('sitegroup.download_file',
+                                directory=directory,
+                                filename=filename) }}"
+						   class="btn btn-sm btn-light">
+							<i class="bi bi-download"></i>
+						</a>
+						{{ back_button(text='Back to Details',url=url_for('sitegroup.sitegroup_detail', directory=directory)) }}
+					</div>
+				</div>
+				<div class="card-body p-0">
+					<pre class="m-0 p-3"><code id="xmlContent" class="language-markup">{{ content|e }}</code></pre>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<!-- Prism theme -->
+<link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet">
+<style>
+	pre {
+		font-size: 0.9rem;
+		line-height: 1.4;
+	}
+
+	.card-header h5 {
+		font-weight: 500;
+	}
+
+	.btn-light {
+		color: #0056b3;
+	}
+</style>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js" defer></script>
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const btn = document.getElementById('copyXmlBtn'),
+			code = document.getElementById('xmlContent');
+		btn.addEventListener('click', () => {
+			navigator.clipboard.writeText(code.textContent)
+				.then(() => btn.innerHTML = '<i class="bi bi-check-lg"></i>')
+				.catch(() => btn.innerHTML = '<i class="bi bi-x-lg"></i>');
+			setTimeout(() => btn.innerHTML = '<i class="bi bi-clipboard"></i>', 1500);
+		});
+	});
+</script>
+{% endblock %}

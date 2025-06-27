@@ -1,0 +1,12 @@
+{# templates/work_status/connect.html #}
+{% extends "layout.html" %}
+
+{% block title %}Connect Basecamp{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Connect to Basecamp</h1>
+    <p>You need to authorize access to your Basecamp account to view and manage tasks.</p>
+    <a href="{{ url_for('work_status.connect') }}" class="btn btn-primary">Connect with Basecamp</a>
+</div>
+{% endblock %}

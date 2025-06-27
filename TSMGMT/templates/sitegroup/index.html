@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}Sitegroups{% endblock %}
+
+{% block content %}
+<div class="container">
+	<h1>Active Sitegroups</h1>
+
+	<input type="text"
+		   id="searchBox"
+		   placeholder="Search directories..."
+		   onkeyup="filterCards()"
+		   style="margin-bottom:1rem; padding:0.5rem; width:100%; max-width:400px;" />
+
+	<div class="cards-container">
+		{% for sg in sitegroups %}
+		<div class="card" data-directory="{{ sg.directory|lower }}">
+			<div class="card-header">{{ sg.systemname }}</div>
+			<div class="card-body">
+				<p>Directory: {{sg.directory}} </p>
+				<p>SiteGroupID: {{sg.sitegroupid}} </p>
+				<p><a class="btn btn-primary" href="{{ url_for('sitegroup.sitegroup_detail', directory=sg.directory) }}">Explore</a></p>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+<style>
+	.cards-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+		gap: 1rem;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		background: #fff;
+		border-radius: 8px;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		transition: transform .1s;
+	}
+
+		.card:hover {
+			transform: translateY(-2px);
+		}
+
+	.card-header {
+		height: 2.5rem;
+		line-height: 2.5rem;
+		overflow: hidden;
+		white-space: nowrap; 
+		text-overflow: ellipsis;
+		font-weight: bold;
+		padding: 0 0.75rem; 
+	}
+
+	.card-body {
+		padding: 1rem;
+		flex: 1;
+	}
+
+		.card-body a {
+			text-decoration: none;
+			font-weight: 500;
+		}
+</style>
+
+<script>
+	function filterCards() {
+		const query = document.getElementById('searchBox').value.trim().toLowerCase();
+		document.querySelectorAll('.card').forEach(card => {
+			const dir = card.dataset.directory;
+			card.style.display = dir.includes(query) ? 'flex' : 'none';
+		});
+	}
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{# templates/_macros.html #}
+{% macro back_button(text='Back',
+                    default='main.home',
+                    url=None) %}
+  {# 0) if the caller provided a url, use it immediately #}
+  {% if url %}
+    {% set href = url %}
+  {% else %}
+    {# 1) explicit ?next= in URL #}
+    {% set nxt = request.args.get('next') %}
+    {% if nxt %}
+      {% set href = nxt %}
+    {% elif request.referrer %}
+      {# 2) fall back to HTTP Referer header #}
+      {% set href = request.referrer %}
+    {% else %}
+      {# 3) final fallback to a named endpoint #}
+      {% set href = url_for(default) %}
+    {% endif %}
+  {% endif %}
+
+<a href="{{ href }}" class="btn btn-primary">
+    {{ text }}
+</a>
+{% endmacro %}

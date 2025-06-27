@@ -1,0 +1,129 @@
+/* give cards a bit more breathing room */
+.todo-list .card {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+}
+
+/* clamp the task name to 2 lines */
+.task-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+/* pad the body more for breathing room */
+.card-body {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.bg-purple {
+    background-color: #D3D3FF;
+}
+
+/* increase gap between cards if you still want */
+.todo-list .card {
+    margin-bottom: 1.5rem;
+}
+
+/* spacing between cards is handled by gap-3 on the <ul> */
+
+/* make the icon itself transparent to pointer events so dragging always hits the <li> */
+.draggable-item i {
+    pointer-events: none;
+}
+
+/* cursor + drag feedback */
+.draggable-item {
+    cursor: grab;
+    transition: transform .1s ease, box-shadow .1s ease;
+    will-change: transform;
+}
+
+    .draggable-item:active {
+        cursor: grabbing;
+        transform: scale(1.02);
+        box-shadow: 0 .25rem .5rem rgba(0,0,0,.1);
+    }
+
+/* ~1.5rem between each card */
+.todo-list .card {
+    margin-bottom: 1.5rem;
+}
+
+/* Category headers get their own style */
+.category-header {
+    padding: 1rem 1.25rem; /* more breathing room */
+    border-bottom: none; /* remove default divider */
+    border-top-left-radius: .5rem;
+    border-top-right-radius: .5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.9rem;
+}
+
+    /* Counter badge tweaks */
+    .category-header .badge {
+        font-size: 0.8rem;
+        padding: 0.25em 0.5em;
+    }
+
+
+/* --------------------
+   Base card styling
+   -------------------- */
+.card.draggable-item {
+    background: #fff;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    position: relative;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+    .card.draggable-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* --------------------
+   Colored accent stripe
+   -------------------- */
+/* stripe driven by parent dropzone */
+.dropzone[data-status="done"] .draggable-item::before {
+    background: #198754;
+}
+.dropzone[data-status="working_on"] .draggable-item::before {
+    background: #0dcaf0;
+}
+.dropzone[data-status="started"] .draggable-item::before {
+    background: #ffc107;
+}
+.dropzone[data-status="not_started"] .draggable-item::before {
+    background: #6c757d;
+}
+.todo-list .draggable-item {
+    border: 1px solid #dee2e6;
+    padding: 1rem; /* space inside every card */
+}
+/* --------------------
+   Keep the grab-icon visible
+   -------------------- */
+.draggable-item i {
+    pointer-events: none;
+}
+
+.todo-list .card-header {
+    border-bottom: 1px solid #dee2e6; /* match Bootstrap’s default */
+}
+.todo-list .draggable-item .card-header,
+.todo-list .draggable-item .list-group-item {
+    padding: 0.5rem 1rem; /* override header & list items if needed */
+}

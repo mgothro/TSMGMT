@@ -1,0 +1,157 @@
+{# templates/work_status/detail.html #}
+{% extends "layout.html" %}
+
+{% block title %}{{ sg.directory }} Details{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="sg-header d-flex justify-content-between align-items-center">
+		<div>
+			<h1 class="mb-0">Sitegroup: {{ sg.directory }}</h1>
+			<p class="conf-path mb-0">
+				Config Path: {{ sg.conf_path or '(not found)' }}
+			</p>
+		</div>
+		<div>
+			{{ back_button(text='Back', url=url_for('sitegroup.index')) }}
+		</div>
+	</div>
+
+	<div class="sg-details">
+		{% set sections = [
+		('Person Types', sg.person_types),
+		('Service Formats', sg.service_formats),
+		('Shared Entities', sg.shared_entities),
+		('GlobalSettings', sg.global_settings.items()),
+		('XML Files', sg.xml_files),
+		('Automated Jobs', sg.automated_jobs)
+		] %}
+
+		{# Render the common array-based cards first #}
+		{% for title, items in sections %}
+		<div class="card mb-3">
+			<div class="card-header" id="header-{{ loop.index }}">
+				<a class="collapsed d-block text-decoration-none" data-bs-toggle="collapse"
+				   href="#collapse-{{ loop.index }}" aria-expanded="false" aria-controls="collapse-{{ loop.index }}">
+					{{ title }} ({{ items|length }})
+				</a>
+			</div>
+			<div id="collapse-{{ loop.index }}" class="collapse" aria-labelledby="header-{{ loop.index }}"
+				 data-bs-parent="#accordion-sg-details">
+				<div class="card-body">
+					<ul class="list-unstyled mb-0">
+						{% if title == 'GlobalSettings' %}
+						{% for key, val in items %}
+						<li><strong>{{ key }}</strong> = {{ val }}</li>
+						{% endfor %}
+						{% elif title == 'XML Files' %}
+						{% for fn in items %}
+						<li>
+							<a href="{{ url_for('sitegroup.view_file', directory=sg.directory, filename=fn) }}">
+								{{ fn }}
+							</a>
+						</li>
+						{% endfor %}
+						{% elif title == 'Automated Jobs' %}
+						{% for job in items %}
+						<li class="mb-2">
+							<strong>{{ job.name }}</strong><br>
+							Type: {{ job.job_type }}<br>
+							Last run:
+							{% if job.last_run %}
+							{{ job.last_run.strftime('%b %d, %Y %I:%M %p') }}
+							{% else %}
+							Never
+							{% endif %}
+						</li>
+						{% endfor %}
+						{% else %}
+						{% for entry in items %}
+						<li>{{ entry }}</li>
+						{% endfor %}
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+
+		{# Contract Cycles vs Sites #}
+		<div class="card mb-3">
+			<div class="card-header" id="header-extra">
+				<a class="collapsed d-block text-decoration-none" data-bs-toggle="collapse"
+				   href="#collapse-extra" aria-expanded="false" aria-controls="collapse-extra">
+					{% if sg.contractcycle_list %}
+					Contract Cycles ({{ sg.contractcycle_list|length }})
+					{% else %}
+					Sites ({{ sg.site_list|length }})
+					{% endif %}
+				</a>
+			</div>
+			<div id="collapse-extra" class="collapse" aria-labelledby="header-extra"
+				 data-bs-parent="#accordion-sg-details">
+				<div class="card-body">
+					<ul class="list-unstyled mb-0">
+						{% if sg.contractcycle_list %}
+						{% for cc in sg.contractcycle_list %}
+						<li class="mb-3">
+							<a href="{{ url_for('sitegroup.contractcycle_detail',
+                                      directory=sg.directory,
+                                      contractcycleid=cc.contractcycleid) }}">
+								{{ cc.description }}
+							</a>
+						</li>
+						{% endfor %}
+						{% else %}
+						{% for site in sg.site_list %}
+						<li class="mb-2">
+							<strong>{{ site.agency_name }}</strong><br>
+							ID: {{ site.siteid }}, Agency: {{ site.site_name }}
+						</li>
+						{% endfor %}
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<style>
+	.sg-header {
+		background-color: #0056b3;
+		color: white;
+		padding: 1rem;
+		border-radius: 8px;
+		margin-bottom: 1.5rem;
+		box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+	}
+
+		.sg-header h1 {
+			margin: 0;
+			font-size: 1.75rem;
+		}
+
+	.card-header a {
+		display: block;
+		font-weight: bold;
+		color: #0056b3;
+	}
+
+	.card-body ul li {
+		margin-left: 1rem;
+	}
+
+	.back-link {
+		margin-top: 2rem;
+	}
+
+		.back-link a {
+			text-decoration: none;
+			color: #0056b3;
+			font-weight: 500;
+		}
+</style>
+
+{% endblock %}
